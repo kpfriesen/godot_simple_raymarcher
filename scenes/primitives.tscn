@@ -1,14 +1,25 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://shaders/simple_marcher.gdshader" type="Shader" id=1]
+
+[sub_resource type="Gradient" id=4]
+colors = PoolColorArray( 0.0645905, 0.111242, 0.324219, 1, 0.960938, 0.442932, 0.831436, 1 )
+
+[sub_resource type="GradientTexture" id=5]
+gradient = SubResource( 4 )
 
 [sub_resource type="ShaderMaterial" id=2]
 shader = ExtResource( 1 )
 shader_param/max_steps = 300
 shader_param/max_dist = 1000.0
+shader_param/gradient = SubResource( 5 )
 
 [sub_resource type="CubeMesh" id=3]
 material = SubResource( 2 )
+
+[sub_resource type="Environment" id=6]
+background_mode = 1
+background_color = Color( 0.0352941, 0.12549, 0.152941, 1 )
 
 [node name="container" type="Spatial"]
 
@@ -18,4 +29,8 @@ mesh = SubResource( 3 )
 material/0 = null
 
 [node name="Camera" type="Camera" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 8.09558 )
+transform = Transform( -0.996267, 0, 0.0863211, 0, 1, 0, -0.0863211, 0, -0.996267, 2.32789, 0.401423, -0.786352 )
+visible = false
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource( 6 )

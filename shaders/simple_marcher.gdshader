@@ -2,10 +2,11 @@ shader_type spatial;
 render_mode unshaded, world_vertex_coords, cull_disabled;
 varying vec3 cameraPosition;
 varying vec3 pos;
+uniform sampler2D gradient;
 
 uniform int max_steps = 300;
 uniform float max_dist = 1000.0;
-const float SURF_DIST = 1e-3;
+const float SURF_DIST = 1e-4;
 
 float sphere_sdf(vec3 p, float r, vec3 offset) {
 	float dist = distance(p, offset) - r;
@@ -48,7 +49,8 @@ vec2 march(vec3 ray_origin, vec3 ray_direction) {
 		vec3 p = ray_origin + dOrigin * ray_direction;
 		//dSurface = sphere_sdf(p, 3.0, vec3(0,0,0));
 		float scale = 1.0;
-		dSurface = mandelbulb_sdf(p/vec3(scale, scale, scale), 2.5, 13);
+		dSurface = mandelbulb_sdf(p/vec3(scale, scale, scale), 7.5, 15);
+		//dSurface = mandelbulb_sdf(p/vec3(scale, scale, scale), 5.0 + TIME / 100.0, 13);
 		//dSurface = smoothMin(sphere_sdf(p, 2.0, vec3(0,0,0)), sphere_sdf(p, 2.0, vec3(3,0,0)), 3.0);
 		dOrigin += dSurface;
 		
@@ -71,8 +73,9 @@ void fragment() {
 	vec2 final_ray = march(ray_origin, ray_direction);
 	float total_distance = final_ray.x;
 	float total_steps = final_ray.y;
-	float outline = min(1.0, total_steps/100.0);
+	float outline = min(1.0, total_steps/200.0);
 	float value = step(total_distance, 0.5);
-	ALBEDO = vec3(outline, outline, outline);
+	vec3 col = vec3(outline, outline, outline);
+	ALBEDO = texture(gradient, col.xy).xyz;
 	ALPHA = value;
 }
